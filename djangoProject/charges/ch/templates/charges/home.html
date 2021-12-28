@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Коммуналка</title>
+    <link href="{% static 'css/home.css' %}" rel="stylesheet">
+    <script rel="script" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script  rel="script"  src="{% static 'js/home.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+</head>
+
+<body>
+<div class="wrapper">
+    <a href="#section_head" id="scroll_top" title="Наверх"></a>
+    <section id="section_head" class="section">
+    <div class="wall">
+
+        <div class="background">
+            <img src="{% static 'images/kkk.jpg' %}">
+        </div>
+        <div class="wall_content">
+            <div class="header_wrapper">
+                <div class="logo">
+                    <img id="logo" src="{% static 'images/home.png' %}">
+                </div>
+                <div class="header">
+                    <div ><a class="nav" href="#section_summary">Сводка</a></div>
+                    <div ><a class="nav" href="#section_input">Начисление</a></div>
+                </div>
+            </div>
+            <div class="wall_info">
+                <p>Сводка и начисление</p><p> по коммунальным платежам</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+<section id="section_summary" class="section">
+    <div class="summary_wrapper">
+        <div class="summary_nav">
+            <div class="first_summary">
+                <a>Оборотная ведомость</a>
+            </div>
+            <div class="second_summary">
+                <a>Ведомость по квартирам</a>
+            </div>
+            <div class="third_summary">
+                <a> Должники</a>
+            </div>
+        </div>
+        <div class="summary_show">
+        <div class="first_table">
+            <table class="table">
+                <tr>
+                    <th>Квартира</th>
+                    <th>Январь</th>
+                    <th>Февраль</th>
+                    <th>Март</th>
+                    <th>Апрель</th>
+                    <th>Май</th>
+                    <th>Июнь</th>
+                    <th>Июль</th>
+                    <th>Август</th>
+                    <th>Сентябрь</th>
+                    <th>Октябрь</th>
+                    <th>Ноябрь</th>
+                    <th>Декабрь</th>
+                    <th>Исх. сальдо</th>
+                </tr>
+                    {% for flat in flats %}
+                        <tr>
+                            <td rowspan="3" >{{ flat.0 }}</td>
+                            {% for key, value in charge_dict.items %}
+                                {% if key == flat.0 %}
+                                    {% for v in value %}
+                                        <td>{{v}}</td>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                            <td rowspan="3">
+                                {% for key, value in out_saldo_dict.items %}
+                                    {% if key == flat.0 %}
+                                        {{ value }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            {% for key, value in payment_dict.items %}
+                                {% if key == flat.0 %}
+                                    {% for v in value %}
+                                        <td>{{v}}</td>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                         <tr>
+                            {% for key, value in saldo_dict.items %}
+                                {% if key == flat.0 %}
+                                    {% for v in value %}
+                                        <td>{{v}}</td>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+            </table>
+        </div>
+
+        <div class="second_table_wrapper">
+
+            <form method="POST">
+                {{ flat_form }}
+            </form>
+
+            <div class="second_table">
+                <table class="table">
+                <tr>
+                    <th><p>На начало года</p>
+                        <p>(+долг/-переплата)</p>
+                    </th>
+                        <th></th>
+                        <th>1</th>
+                        <th>2</th>
+                        <th>3</th>
+                        <th>4</th>
+                        <th>5</th>
+                        <th>6</th>
+                        <th>7</th>
+                        <th>8</th>
+                        <th>9</th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                    <tr class="charges">
+                        <td rowspan="2">
+                            0.0
+                        </td>
+                        <td>Начис.</td>
+                    </tr>
+                    <tr class="payments">
+                        <td>Опл.</td>
+                    </tr>
+                </table>
+            </div>
+            </div>
+        </div>
+        <div class="third_table_wrapper">
+            <div class="third_table">
+                <table class="table">
+                    <tr>
+                        <th rowspan="2">Квартира</th>
+                        <th rowspan="2">Начислено за поледний месяц</th>
+                        <th rowspan="2">Сальдо</th>
+                        <th colspan="4">Задолженность</th>
+                    </tr>
+                    <tr>
+                        <th>1 месяц</th>
+                        <th>2 месяца</th>
+                        <th>3 месяца</th>
+                        <th>Свыше 3-х месяцев</th>
+                    </tr>
+                    {% for key, value in time_diff.items %}
+                        <tr>
+                            <td>{{ key.0 }}</td>
+                            {% for char, value in latest_charge_dict.items %}
+                                    {% if char == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                            {% endfor %}
+                            {% for sal, value in out_saldo_dict.items %}
+                                    {% if sal == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                            {% endfor %}
+                            {% if value < 2 %}
+                                {% for sal, value in out_saldo_dict.items %}
+                                    {% if sal == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if value == 2 %}
+                                <td></td>
+                                {% for sal, value in out_saldo_dict.items %}
+                                    {% if sal == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if value == 3 %}
+                                <td></td>
+                                <td></td>
+                                 {% for sal, value in out_saldo_dict.items %}
+                                    {% if sal == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                 {% endfor %}
+                            {% endif %}
+                            {% if value > 3 %}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                {% for sal, value in out_saldo_dict.items %}
+                                    {% if sal == key.0 %}
+                                        <td>{{ value }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="section_input" class="section">
+    <div class="input_nav">
+        <div class="input_charge">
+            <a>Начисление</a>
+        </div>
+        <div class="input_payment">
+            <a>Платежи</a>
+        </div>
+    </div>
+    <div class="data_input_wrapper">
+        <div class="charge_form">
+            <form id="charge_form" method="post">
+                {% csrf_token %}
+                {{ charge_form|crispy }}
+                <input id="charge_submit" type="submit" class="btn btn-primary"></input>
+            </form>
+        </div>
+        <div class="payment_form">
+            <form id="payment_form" method="post">
+                {% csrf_token %}
+                {{ payment_form|crispy }}
+                <input id="charge_submit" type="submit" class="btn btn-primary"></input>
+            </form>
+        </div>
+    </div>
+</section>
+
+</div>
+</body>
+</html>
+
